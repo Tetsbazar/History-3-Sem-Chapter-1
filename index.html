@@ -24,6 +24,9 @@ body{font-family:'Syne',sans-serif;background:#f0faf4;min-height:100vh;color:#1c
 .set-card .set-title{font-family:'Tiro Bangla',serif;font-size:0.85rem;color:#5a7a66;margin:0.2rem 0 0.5rem}
 .set-card .set-meta{display:flex;gap:1rem;font-size:0.7rem;color:#5a7a66}
 .set-card .set-meta span{background:#f0faf4;padding:0.15rem 0.6rem;border-radius:4px}
+.set-card .attempt-badge{font-size:0.7rem;color:#dc3545;font-weight:600;margin-top:0.3rem}
+.set-card.locked{opacity:0.5;cursor:not-allowed;border-color:#dc3545}
+.set-card.locked:hover{transform:none;box-shadow:none}
 .quiz-info{background:white;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;border:1px solid #c5dccb;display:flex;gap:1rem;flex-wrap:wrap}
 .info-item{font-family:'Tiro Bangla',serif;font-size:0.85rem;color:#5a7a66}
 .info-item strong{color:#1a7a4a}
@@ -62,18 +65,9 @@ body{font-family:'Syne',sans-serif;background:#f0faf4;min-height:100vh;color:#1c
 .rb-num{font-size:1.4rem;font-weight:800}
 .rb-label{font-family:'Tiro Bangla',serif;font-size:0.8rem;color:#5a7a66;margin-top:0.2rem}
 .retry-btn{background:#1a7a4a;color:white;border:none;padding:0.75rem 2rem;border-radius:8px;font-family:'Tiro Bangla',serif;font-size:1rem;cursor:pointer;margin-right:0.5rem}
+.retry-btn:disabled{background:#c5dccb;cursor:not-allowed}
 .review-btn{background:white;color:#1a7a4a;border:1.5px solid #1a7a4a;padding:0.75rem 2rem;border-radius:8px;font-family:'Tiro Bangla',serif;font-size:1rem;cursor:pointer}
 .back-btn{background:white;color:#5a7a66;border:1.5px solid #c5dccb;padding:0.75rem 2rem;border-radius:8px;font-family:'Tiro Bangla',serif;font-size:1rem;cursor:pointer;margin-top:0.6rem}
-.start-wrap{background:white;border-radius:14px;padding:2rem;text-align:center;border:1px solid #c5dccb}
-.start-wrap h2{font-family:'Tiro Bangla',serif;font-size:1.4rem;color:#1c2e24;margin-bottom:0.5rem}
-.start-wrap p{font-family:'Tiro Bangla',serif;font-size:0.9rem;color:#5a7a66;line-height:1.7;margin-bottom:1.2rem}
-.start-info{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.5rem}
-.si{background:#f0faf4;border-radius:10px;padding:0.8rem;text-align:center}
-.si-num{font-size:1.4rem;font-weight:800;color:#1a7a4a}
-.si-label{font-family:'Tiro Bangla',serif;font-size:0.8rem;color:#5a7a66}
-.start-btn{background:#1a7a4a;color:white;border:none;padding:0.85rem 2.5rem;border-radius:10px;font-family:'Tiro Bangla',serif;font-size:1.05rem;cursor:pointer;box-shadow:0 4px 15px rgba(26,122,74,0.3)}
-.start-btn:hover{background:#2aad68}
-.start-btn:disabled{background:#c5dccb;cursor:not-allowed;box-shadow:none}
 .login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:999;display:none}
 .login-overlay.active{display:flex}
 .login-modal{background:white;border-radius:16px;padding:2.5rem;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
@@ -157,7 +151,7 @@ body{font-family:'Syne',sans-serif;background:#f0faf4;min-height:100vh;color:#1c
       <div class="result-bar"><div class="rb-num" id="rbPct" style="color:#e8730a"></div><div class="rb-label">স্কোর</div></div>
     </div>
     <div id="attemptInfo" style="font-family:'Tiro Bangla',serif;font-size:0.85rem;color:#5a7a66;margin-bottom:1rem;"></div>
-    <button class="retry-btn" onclick="startQuiz(currentSetId)">আবার চেষ্টা করো</button>
+    <button class="retry-btn" id="retryBtn" onclick="retryQuiz()">আবার চেষ্টা করো</button>
     <button class="review-btn" onclick="showReview()">উত্তর দেখো</button>
     <br>
     <button class="back-btn" onclick="goToHub()">← Hub এ ফিরে যাও</button>
@@ -173,107 +167,135 @@ const MAX_ATTEMPTS = 10;
 const TOTAL_SETS = 15;
 
 const userData = [
-  {username:"alfa_romeo", password:"ARx7P29m", attempts:{}},
-  {username:"santos", password:"St8Qv41L", attempts:{}},
-  {username:"falcon", password:"Fc3MZ92k", attempts:{}},
-  {username:"titan", password:"Ti6Rp84W", attempts:{}},
-  {username:"matrix", password:"Mx5Kd73N", attempts:{}},
-  {username:"phoenix", password:"Ph9Js28V", attempts:{}},
-  {username:"cobra", password:"Cb4Ln65X", attempts:{}},
-  {username:"shadow", password:"Sh7Wp19Q", attempts:{}},
-  {username:"rocket", password:"Rc2Ty86M", attempts:{}},
-  {username:"warrior", password:"Wr8Az34K", attempts:{}},
-  {username:"eagle", password:"Eg5Xq72P", attempts:{}},
-  {username:"thunder", password:"Th1Vk93R", attempts:{}},
-  {username:"dragon", password:"Dr6Hm48N", attempts:{}},
-  {username:"panther", password:"Pa9Nc25J", attempts:{}},
-  {username:"viking", password:"Vi4Qs87L", attempts:{}},
-  {username:"hunter", password:"Hu7Bp31X", attempts:{}},
-  {username:"legend", password:"Le2Mz64T", attempts:{}},
-  {username:"ranger", password:"Ra8Kd95W", attempts:{}},
-  {username:"knight", password:"Kn3Xp57Q", attempts:{}},
-  {username:"turbo", password:"Tu6Lv21N", attempts:{}},
-  {username:"alpha", password:"Ap9Rm83K", attempts:{}},
-  {username:"bravo", password:"Br5Yt42M", attempts:{}},
-  {username:"charlie", password:"Ch7Wq16P", attempts:{}},
-  {username:"delta", password:"De4Nk78X", attempts:{}},
-  {username:"echo", password:"Ec8Jp35V", attempts:{}},
-  {username:"foxtrot", password:"Fx2Lm94Q", attempts:{}},
-  {username:"gamma", password:"Ga6Xs27T", attempts:{}},
-  {username:"helix", password:"He1Vp85N", attempts:{}},
-  {username:"inferno", password:"In9Qk43L", attempts:{}},
-  {username:"jaguar", password:"Ja5Mz72W", attempts:{}},
-  {username:"karma", password:"Ka8Rp14X", attempts:{}},
-  {username:"laser", password:"La3Tn67Q", attempts:{}},
-  {username:"meteor", password:"Me7Wx29P", attempts:{}},
-  {username:"nova", password:"No4Kz86M", attempts:{}},
-  {username:"omega", password:"Om2Lp53V", attempts:{}},
-  {username:"pegasus", password:"Pe9Xq71N", attempts:{}},
-  {username:"quantum", password:"Qu5Vr38K", attempts:{}},
-  {username:"rebel", password:"Re8Mz24T", attempts:{}},
-  {username:"storm", password:"St1Kp97W", attempts:{}},
-  {username:"tornado", password:"To6Nx45Q", attempts:{}},
-  {username:"ultra", password:"Ul3Wp82M", attempts:{}},
-  {username:"vector", password:"Ve7Lq19X", attempts:{}},
-  {username:"wolf", password:"Wo4Rm63P", attempts:{}},
-  {username:"xenon", password:"Xe9Tk25N", attempts:{}},
-  {username:"yodha", password:"Yo2Vz78K", attempts:{}},
-  {username:"zeus", password:"Ze8Mp41Q", attempts:{}},
-  {username:"atlas", password:"At5Lx93W", attempts:{}},
-  {username:"blaze", password:"Bl1Qn67M", attempts:{}},
-  {username:"cyclone", password:"Cy7Rp34T", attempts:{}},
-  {username:"dynamo", password:"Dy4Wk82X", attempts:{}},
-  {username:"apollo", password:"Ap7Kx94Lm", attempts:{}},
-  {username:"archer", password:"Ar3Vp62Qn", attempts:{}},
-  {username:"asteroid", password:"As8Tm15Rw", attempts:{}},
-  {username:"bandit", password:"Ba5Qz71Kp", attempts:{}},
-  {username:"bison", password:"Bi9Ln34Xt", attempts:{}},
-  {username:"bullet", password:"Bu2Wr86Mv", attempts:{}},
-  {username:"canyon", password:"Ca6Xp29Qk", attempts:{}},
-  {username:"captain", password:"Cp1Mz75Ln", attempts:{}},
-  {username:"comet", password:"Co8Tk43Wp", attempts:{}},
-  {username:"cyclonex", password:"Cy4Vr92Km", attempts:{}},
-  {username:"diesel", password:"Di7Lp18Qx", attempts:{}},
-  {username:"domino", password:"Do3Wn67Rt", attempts:{}},
-  {username:"duke", password:"Du9Kx25Mv", attempts:{}},
-  {username:"empire", password:"Em5Qp84Ln", attempts:{}},
-  {username:"explorer", password:"Ex2Vz39Kt", attempts:{}},
-  {username:"fighter", password:"Fi8Lm71Qw", attempts:{}},
-  {username:"galaxy", password:"Ga4Tk26Xp", attempts:{}},
-  {username:"gladiator", password:"Gl7Wp95Mn", attempts:{}},
-  {username:"gravity", password:"Gr1Nx53Lq", attempts:{}},
-  {username:"hawk", password:"Ha9Kz42Rt", attempts:{}},
-  {username:"horizon", password:"Ho5Vm87Xp", attempts:{}},
-  {username:"icefire", password:"Ic3Lp16Qn", attempts:{}},
-  {username:"impact", password:"Im8Wr74Kt", attempts:{}},
-  {username:"ironman", password:"Ir2Xq95Mv", attempts:{}},
-  {username:"jetstar", password:"Je6Nk38Lp", attempts:{}},
-  {username:"kingston", password:"Ki1Vp72Qw", attempts:{}},
-  {username:"lightning", password:"Li9Tm45Rx", attempts:{}},
-  {username:"majestic", password:"Ma4Kp83Ln", attempts:{}},
-  {username:"monster", password:"Mo7Wz21Qt", attempts:{}},
-  {username:"neptune", password:"Ne3Lx96Mv", attempts:{}},
-  {username:"ninja", password:"Ni8Qr54Kp", attempts:{}},
-  {username:"orbit", password:"Or2Vp73Ln", attempts:{}},
-  {username:"patriot", password:"Pa6Tk18Qw", attempts:{}},
-  {username:"pioneer", password:"Pi1Xm85Rt", attempts:{}},
-  {username:"predator", password:"Pr9Lq47Kv", attempts:{}},
-  {username:"proton", password:"Pt4Wn62Mx", attempts:{}},
-  {username:"rapid", password:"Ra7Kx93Lp", attempts:{}},
-  {username:"samurai", password:"Sa3Vp25Qn", attempts:{}},
-  {username:"sniper", password:"Sn8Tm71Rw", attempts:{}},
-  {username:"solaris", password:"So2Qk84Mv", attempts:{}},
-  {username:"spartan", password:"Sp6Ln39Xt", attempts:{}},
-  {username:"striker", password:"St1Wr57Kp", attempts:{}},
-  {username:"summit", password:"Su9Xp26Lm", attempts:{}},
-  {username:"taurus", password:"Ta5Vz91Qw", attempts:{}},
-  {username:"tempest", password:"Te3Kp48Rt", attempts:{}},
-  {username:"trident", password:"Tr8Wm72Ln", attempts:{}},
-  {username:"valiant", password:"Va2Nx35Qk", attempts:{}},
-  {username:"voyager", password:"Vo6Lp97Mx", attempts:{}},
-  {username:"wildfire", password:"Wi1Tk64Rv", attempts:{}},
-  {username:"zenith", password:"Ze9Qx28Lp", attempts:{}}
+  {username:"alfa_romeo", password:"ARx7P29m"},
+  {username:"santos", password:"St8Qv41L"},
+  {username:"falcon", password:"Fc3MZ92k"},
+  {username:"titan", password:"Ti6Rp84W"},
+  {username:"matrix", password:"Mx5Kd73N"},
+  {username:"phoenix", password:"Ph9Js28V"},
+  {username:"cobra", password:"Cb4Ln65X"},
+  {username:"shadow", password:"Sh7Wp19Q"},
+  {username:"rocket", password:"Rc2Ty86M"},
+  {username:"warrior", password:"Wr8Az34K"},
+  {username:"eagle", password:"Eg5Xq72P"},
+  {username:"thunder", password:"Th1Vk93R"},
+  {username:"dragon", password:"Dr6Hm48N"},
+  {username:"panther", password:"Pa9Nc25J"},
+  {username:"viking", password:"Vi4Qs87L"},
+  {username:"hunter", password:"Hu7Bp31X"},
+  {username:"legend", password:"Le2Mz64T"},
+  {username:"ranger", password:"Ra8Kd95W"},
+  {username:"knight", password:"Kn3Xp57Q"},
+  {username:"turbo", password:"Tu6Lv21N"},
+  {username:"alpha", password:"Ap9Rm83K"},
+  {username:"bravo", password:"Br5Yt42M"},
+  {username:"charlie", password:"Ch7Wq16P"},
+  {username:"delta", password:"De4Nk78X"},
+  {username:"echo", password:"Ec8Jp35V"},
+  {username:"foxtrot", password:"Fx2Lm94Q"},
+  {username:"gamma", password:"Ga6Xs27T"},
+  {username:"helix", password:"He1Vp85N"},
+  {username:"inferno", password:"In9Qk43L"},
+  {username:"jaguar", password:"Ja5Mz72W"},
+  {username:"karma", password:"Ka8Rp14X"},
+  {username:"laser", password:"La3Tn67Q"},
+  {username:"meteor", password:"Me7Wx29P"},
+  {username:"nova", password:"No4Kz86M"},
+  {username:"omega", password:"Om2Lp53V"},
+  {username:"pegasus", password:"Pe9Xq71N"},
+  {username:"quantum", password:"Qu5Vr38K"},
+  {username:"rebel", password:"Re8Mz24T"},
+  {username:"storm", password:"St1Kp97W"},
+  {username:"tornado", password:"To6Nx45Q"},
+  {username:"ultra", password:"Ul3Wp82M"},
+  {username:"vector", password:"Ve7Lq19X"},
+  {username:"wolf", password:"Wo4Rm63P"},
+  {username:"xenon", password:"Xe9Tk25N"},
+  {username:"yodha", password:"Yo2Vz78K"},
+  {username:"zeus", password:"Ze8Mp41Q"},
+  {username:"atlas", password:"At5Lx93W"},
+  {username:"blaze", password:"Bl1Qn67M"},
+  {username:"cyclone", password:"Cy7Rp34T"},
+  {username:"dynamo", password:"Dy4Wk82X"},
+  {username:"apollo", password:"Ap7Kx94Lm"},
+  {username:"archer", password:"Ar3Vp62Qn"},
+  {username:"asteroid", password:"As8Tm15Rw"},
+  {username:"bandit", password:"Ba5Qz71Kp"},
+  {username:"bison", password:"Bi9Ln34Xt"},
+  {username:"bullet", password:"Bu2Wr86Mv"},
+  {username:"canyon", password:"Ca6Xp29Qk"},
+  {username:"captain", password:"Cp1Mz75Ln"},
+  {username:"comet", password:"Co8Tk43Wp"},
+  {username:"cyclonex", password:"Cy4Vr92Km"},
+  {username:"diesel", password:"Di7Lp18Qx"},
+  {username:"domino", password:"Do3Wn67Rt"},
+  {username:"duke", password:"Du9Kx25Mv"},
+  {username:"empire", password:"Em5Qp84Ln"},
+  {username:"explorer", password:"Ex2Vz39Kt"},
+  {username:"fighter", password:"Fi8Lm71Qw"},
+  {username:"galaxy", password:"Ga4Tk26Xp"},
+  {username:"gladiator", password:"Gl7Wp95Mn"},
+  {username:"gravity", password:"Gr1Nx53Lq"},
+  {username:"hawk", password:"Ha9Kz42Rt"},
+  {username:"horizon", password:"Ho5Vm87Xp"},
+  {username:"icefire", password:"Ic3Lp16Qn"},
+  {username:"impact", password:"Im8Wr74Kt"},
+  {username:"ironman", password:"Ir2Xq95Mv"},
+  {username:"jetstar", password:"Je6Nk38Lp"},
+  {username:"kingston", password:"Ki1Vp72Qw"},
+  {username:"lightning", password:"Li9Tm45Rx"},
+  {username:"majestic", password:"Ma4Kp83Ln"},
+  {username:"monster", password:"Mo7Wz21Qt"},
+  {username:"neptune", password:"Ne3Lx96Mv"},
+  {username:"ninja", password:"Ni8Qr54Kp"},
+  {username:"orbit", password:"Or2Vp73Ln"},
+  {username:"patriot", password:"Pa6Tk18Qw"},
+  {username:"pioneer", password:"Pi1Xm85Rt"},
+  {username:"predator", password:"Pr9Lq47Kv"},
+  {username:"proton", password:"Pt4Wn62Mx"},
+  {username:"rapid", password:"Ra7Kx93Lp"},
+  {username:"samurai", password:"Sa3Vp25Qn"},
+  {username:"sniper", password:"Sn8Tm71Rw"},
+  {username:"solaris", password:"So2Qk84Mv"},
+  {username:"spartan", password:"Sp6Ln39Xt"},
+  {username:"striker", password:"St1Wr57Kp"},
+  {username:"summit", password:"Su9Xp26Lm"},
+  {username:"taurus", password:"Ta5Vz91Qw"},
+  {username:"tempest", password:"Te3Kp48Rt"},
+  {username:"trident", password:"Tr8Wm72Ln"},
+  {username:"valiant", password:"Va2Nx35Qk"},
+  {username:"voyager", password:"Vo6Lp97Mx"},
+  {username:"wildfire", password:"Wi1Tk64Rv"},
+  {username:"zenith", password:"Ze9Qx28Lp"}
 ];
+
+// ============================================================
+//  localStorage-এ attempts সংরক্ষণ
+// ============================================================
+function getAttempts() {
+  try {
+    const data = localStorage.getItem('testBazarAttempts');
+    return data ? JSON.parse(data) : {};
+  } catch { return {}; }
+}
+
+function saveAttempts(attempts) {
+  localStorage.setItem('testBazarAttempts', JSON.stringify(attempts));
+}
+
+function getAttemptCount(username, setId) {
+  const attempts = getAttempts();
+  const key = username + '|' + setId;
+  return attempts[key] || 0;
+}
+
+function incrementAttempt(username, setId) {
+  const attempts = getAttempts();
+  const key = username + '|' + setId;
+  attempts[key] = (attempts[key] || 0) + 1;
+  saveAttempts(attempts);
+  return attempts[key];
+}
 
 // ============================================================
 //  সব সেটের ডেটা (Set 1-15 for Unit 1 Chapter 1)
@@ -562,7 +584,7 @@ const allSets = {
       {q: 'প্রাচীন ভারতে বিষ্টি বলতে কী বোঝানো হত?', opts: ['এক ধরনের সুতিবস্ত্র', 'বেগার শ্রম প্রথা', 'সেচযন্ত্র', 'পথকর'], ans: 1, exp: 'প্রাচীন ও আদি মধ্যযুগে কৃষকদের দিয়ে বিনা পারিশ্রমিকে কাজ করিয়ে নেওয়ার প্রথাকে বিষ্টি বা বেগার শ্রম বলা হত।'},
       {q: 'সুলতানি যুগে ক্রীতদাস বা দাসদাসীদের কীসের মতো বাজারে বিক্রি করা হত বলে ঐতিহাসিক জিয়াউদ্দিন বারনি উল্লেখ করেছেন?', opts: ['জমির মতো', 'গোরু, ঘোড়ার মতো পশুর মতো', 'অলংকারের মতো', 'বইয়ের মতো'], ans: 1, exp: 'বারনির বর্ণনা থেকে জানা যায় যে, সে যুগে দাসবাজারে গোরু বা ঘোড়ার মতোই সাধারণ দাসদাসীদের কেনাবেচা চলত।'},
       {q: 'আল বিরুনি সমকালীন হিন্দু সমাজের বিচারব্যবস্থায় কোন্ বৈষম্যের কথা উল্লেখ করেছেন?', opts: ['গরিবদের বিচার হত না', 'ব্রাহ্মণরা বিশেষ সুবিধা পেত এবং তাদের প্রাণদণ্ড দেওয়া যেত না', 'মেয়েদের কোনো বিচার চাওয়ার অধিকার ছিল না', 'কেবলমাত্র রাজাই বিচার করতেন'], ans: 1, exp: 'সামাজিক অসাম্যের চিত্র তুলে ধরে আল বিরুনি দেখিয়েছেন যে, বিচারে ব্রাহ্মণরা সর্বোচ্চ সুবিধা ভোগ করত এবং তাদের ফাঁসি বা প্রাণদণ্ড নিষিদ্ধ ছিল।'},
-      {q: 'চোল যুগে গ্রামের নারী ও পুরুষ নির্বিশেষে দু-বেলা স্নান করার প্রথার কথা কোন্ পর্যটক উল্লেখ করেছেন?', opts: ['মার্কো পোলো', 'আবদুর রজ্জাক', 'তাভার্নিয়ে', 'আল বিরুনি'], ans: 0, exp: 'মার্কো পোলো দক্ষিণ ভারতের করমণ্ডল উপকূলে ভ্রমণকালে সেখানকার অধিবাসীদের পরিচ্ছন্নতা ও দু-বেলা স্নান করার এই কড়া নিয়মের কথা উল্লেখ করেছেন।'}
+      {q: 'চোল যুগে গ্রামের নারী ও পুরুষ নির্বিশেষে দু-বেলা স্নান করার প্রথার কথা কোন্ পর্যটক উল্লেখ করেছেন?', opts: ['মার্কো পোলো', 'আবদুর রজ্জাক', 'তাভার্নিয়ে', 'আল বিরুনি'], ans: 0, exp: 'মার্কো পোলো দক্ষিণ ভারতের করমণ্ডল উপকূলে ভ্রমণকালে সেখানকার অধিবাসীদের পরিচ্ছন্নতা ও দু-বেলা স্নান করার এই কড়া নিয়মের কথা উল্লেখ করেছেন。'}
     ]
   },
   14: {
@@ -579,8 +601,8 @@ const allSets = {
       {q: 'চোল যুগে বীর রাজেন্দ্রর আমলে বুদ্ধমিত্র তামিল ও সংস্কৃত ব্যাকরণের সমন্বয় ঘটিয়ে কোন্ গ্রন্থটি রচনা করেন?', opts: ['দণ্ডীয়ারম্', 'নেনিনাথন্', 'বীরসোলিয়ম্', 'জীবকচিন্তামণি'], ans: 2, exp: '১০৬২-৭০ খ্রিস্টাব্দের মধ্যে বুদ্ধমিত্র এই অসামান্য গ্রন্থটি রচনা করে তামিল ও সংস্কৃত ভাষার ব্যাকরণ ও অলংকারের মধ্যে চমৎকার সমন্বয় সাধন করেন।'},
       {q: 'চোল যুগে জৈন কবি তিরুত্তকদেবর তামিল ভাষায় কোন্ শ্রেষ্ঠ মহাকাব্যটি রচনা করেছিলেন?', opts: ['রামায়ণম্', 'জীবকচিন্তামণি', 'মুকুন্দমালা', 'কুলোত্তুঙ্গচোলচরিতে'], ans: 1, exp: 'তামিল সাহিত্যের অন্যতম শ্রেষ্ঠ রত্ন হিসেবে স্বীকৃত এই মহাকাব্যটি জৈন কবি তিরুত্তকদেবর চোল যুগে রচনা করেছিলেন।'},
       {q: 'সুলতানি আমলে সংস্কৃত গল্পগ্রন্থ তুতিনামা-কে ফারসি ভাষায় কে অনুবাদ করেছিলেন?', opts: ['জিয়াউদ্দিন বারনি', 'জিয়া নক্সবি', 'আমির খসরু', 'মিনহাজউদ্দিন সিরাজ'], ans: 1, exp: 'মহম্মদ-বিন-তুঘলকের রাজত্বকালে জিয়া নক্সবি অত্যন্ত দক্ষতার সঙ্গে সংস্কৃত গল্পের এই সংকলনটি ফারসিতে অনুবাদ করেন।'},
-      {q: 'মুঘল যুগে সম্রাট আকবরের পৃষ্ঠপোষকতায় মহাভারত ফারসি ভাষায় অনূদিত হয়েছিল। এই অনুবাদ কাজে আকবরের কোন্ সভাসদ যুক্ত ছিলেন, যিনি একাধিক ভাষায় পটু ছিলেন?', opts: ['বীরবল', 'টোডরমল', 'আবদুর রহিম খান-ই-খানান', 'আবুল ফজল'], ans: 2, exp: 'তিনি একাধারে সামরিক নেতা এবং আরবি, ফারসি, তুর্কি, হিন্দি ও সংস্কৃত ভাষায় সুপণ্ডিত ছিলেন এবং আকবরের অনুবাদ বিভাগে গুরুত্বপূর্ণ ভূমিকা নিয়েছিলেন।'},
-      {q: 'আরবদের সিন্ধুজয় সম্পর্কে আরবি ভাষায় রচিত প্রামাণ্য ইতিহাস গ্রন্থটির নাম কী?', opts: ['তহকিক-ই-হিন্দ', 'চাচনামা', 'তাজ-উল-মাসির', 'তুঘলকনামা'], ans: 1, exp: 'মির মহম্মদ মাসুম রচিত তারিখ-ই-সিন্ধ-এর পাশাপাশি চাচনামা গ্রন্থটিও আরবদের সিন্ধু বিজয়ের অন্যতম প্রধান ও প্রামাণ্য ঐতিহাসিক দলিল।'},
+      {q: 'মুঘল যুগে সম্রাট আকবরের পৃষ্ঠপোষকতায় মহাভারত ফারসি ভাষায় অনূদিত হয়েছিল। এই অনুবাদ কাজে আকবরের কোন্ সভাসদ যুক্ত ছিলেন, যিনি একাধিক ভাষায় পটু ছিলেন?', opts: ['বীরবল', 'টোডরমল', 'আবদুর রহিম খান-ই-খানান', 'আবুল ফজল'], ans: 2, exp: 'তিনি একাধারে সামরিক নেতা এবং আরবি, ফারসি, তুর্কি, হিন্দি ও সংস্কৃত ভাষায় সুপণ্ডিত ছিলেন এবং আকবরের অনুবাদ বিভাগে গুরুত্বপূর্ণ ভূমিকা নিয়েছিলেন。'},
+      {q: 'আরবদের সিন্ধুজয় সম্পর্কে আরবি ভাষায় রচিত প্রামাণ্য ইতিহাস গ্রন্থটির নাম কী?', opts: ['তহকিক-ই-হিন্দ', 'চাচনামা', 'তাজ-উল-মাসির', 'তুঘলকনামা'], ans: 1, exp: 'মির মহম্মদ মাসুম রচিত তারিখ-ই-সিন্ধ-এর পাশাপাশি চাচনামা গ্রন্থটিও আরবদের সিন্ধু বিজয়ের অন্যতম প্রধান ও প্রামাণ্য ঐতিহাসিক দলিল。'},
       {q: 'সুলতানি যুগে ফারসি এবং হিন্দি শব্দের সংমিশ্রণে ভারতের সাধারণ মানুষের যোগাযোগের জন্য কোন্ নতুন ভাষার উদ্ভব ঘটেছিল?', opts: ['মারাঠি', 'গুরুমুখি', 'উর্দু', 'পালি'], ans: 2, exp: 'হিন্দু ও মুসলিমদের পারস্পরিক ভাব বিনিময়ের মাধ্যম হিসেবে এই দুই ভাষার সংমিশ্রণে সুলতানি যুগেই উর্দু ভাষার উদ্ভব ও বিকাশ ঘটে।'},
       {q: 'কোন্ চারণকবির রচিত পৃথ্বীরাজ রাসো গ্রন্থ থেকে রাজপুত বীর পৃথ্বীরাজ চৌহানের বীরত্বকাহিনি জানা যায়?', opts: ['চাঁদ বরদৈ', 'শার্ঙ্গধর', 'মালিক মহম্মদ জয়সি', 'তুলসীদাস'], ans: 0, exp: 'হিন্দি সাহিত্যের আদি যুগের এই অসামান্য বীরত্বব্যঞ্জক কাব্যটি রচনা করেছিলেন পৃথ্বীরাজ চৌহানের সভাকবি চাঁদ বরদৈ।'},
       {q: 'চিকিৎসাশাস্ত্রের ওপর মুজমুআ-ই-জিয়াই নামক বিখ্যাত গ্রন্থটি মহম্মদ বিন তুঘলকের আমলে কে রচনা করেন?', opts: ['শামসউদ্দিন মুস্তৌফি', 'জিয়া মহম্মদ', 'মাধবকার', 'জয়নুল আবেদিন'], ans: 1, exp: 'সুলতানি যুগে ইউনানি ও ভারতীয় চিকিৎসা পদ্ধতির মিশ্রণে চিকিৎসাশাস্ত্রের উন্নতির নিদর্শন হিসেবে জিয়া মহম্মদ এই গ্রন্থটি রচনা করেন।'},
@@ -632,13 +654,30 @@ function buildHub() {
     const set = allSets[i];
     const card = document.createElement('div');
     card.className = 'set-card';
+    
+    // Check if user is logged in and get attempt count
+    let attemptCount = 0;
+    let isLocked = false;
+    if (currentUser) {
+      attemptCount = getAttemptCount(currentUser.username, i);
+      isLocked = attemptCount >= MAX_ATTEMPTS;
+      if (isLocked) card.classList.add('locked');
+    }
+    
     card.innerHTML = `
       <div class="icon">${set.icon}</div>
       <div class="set-num">${set.name}</div>
       <div class="set-title">${set.topic}</div>
       <div class="set-meta"><span>১৫ প্রশ্ন</span><span>১০ মিনিট</span></div>
+      ${currentUser ? `<div class="attempt-badge">${isLocked ? '🔒 সম্পূর্ণ' : attemptCount + '/' + MAX_ATTEMPTS}</div>` : ''}
     `;
-    card.onclick = () => selectSet(i);
+    card.onclick = () => {
+      if (isLocked) {
+        alert(`⚠️ আপনি ${set.name} এর সর্বোচ্চ ${MAX_ATTEMPTS} বার Test দিয়েছেন।`);
+        return;
+      }
+      selectSet(i);
+    };
     grid.appendChild(card);
   }
 }
@@ -654,6 +693,7 @@ function showHub() {
   } else {
     document.getElementById('hubUserInfo').innerHTML = '';
   }
+  buildHub();
 }
 
 function goToHub() {
@@ -664,6 +704,7 @@ function goToHub() {
   clearInterval(timerInterval);
   isLoggedIn = false;
   currentUser = null;
+  buildHub();
 }
 
 // ============================================================
@@ -674,6 +715,18 @@ function selectSet(id) {
   const set = allSets[id];
   pendingSetId = id;
   document.getElementById('loginSetName').textContent = `📚 ${set.name} — ${set.topic}`;
+  
+  // Check if already logged in
+  if (currentUser) {
+    const attemptCount = getAttemptCount(currentUser.username, id);
+    if (attemptCount >= MAX_ATTEMPTS) {
+      alert(`⚠️ আপনি ${set.name} এর সর্বোচ্চ ${MAX_ATTEMPTS} বার Test দিয়েছেন।`);
+      return;
+    }
+    startQuiz(id);
+    return;
+  }
+  
   document.getElementById('loginOverlay').classList.add('active');
   document.getElementById('loginUsername').value = '';
   document.getElementById('loginPassword').value = '';
@@ -701,10 +754,11 @@ function doLoginFromSet() {
 
   const user = userData.find(u => u.username === username && u.password === password);
   if (user) {
-    const setAttempts = user.attempts[currentSetId] || 0;
+    const setId = pendingSetId || currentSetId;
+    const setAttempts = getAttemptCount(username, setId);
     if (setAttempts >= MAX_ATTEMPTS) {
       limitInfo.style.display = 'block';
-      document.getElementById('limitMsg').textContent = `আপনি এই অ্যাকাউন্ট দিয়ে ${allSets[currentSetId].name} এর সর্বোচ্চ ${MAX_ATTEMPTS} বার Test দিয়েছেন। আর Test দেওয়া সম্ভব নয়।`;
+      document.getElementById('limitMsg').textContent = `আপনি এই অ্যাকাউন্ট দিয়ে ${allSets[setId].name} এর সর্বোচ্চ ${MAX_ATTEMPTS} বার Test দিয়েছেন। আর Test দেওয়া সম্ভব নয়।`;
       errorEl.style.display = 'none';
       loginBtn.disabled = true;
       return;
@@ -719,7 +773,7 @@ function doLoginFromSet() {
     
     document.getElementById('hubUserInfo').innerHTML = `👤 ${currentUser.username} — Test দিতে সেট সিলেক্ট করো।`;
     
-    startQuiz(currentSetId);
+    startQuiz(pendingSetId || currentSetId);
   } else {
     errorEl.textContent = '❌ ভুল ইউজারনেম বা পাসওয়ার্ড। আবার চেষ্টা করুন।';
     errorEl.style.display = 'block';
@@ -746,13 +800,13 @@ document.addEventListener('DOMContentLoaded', function() {
 function startQuiz(setId) {
   if (!isLoggedIn || !currentUser) return;
   
-  const setAttempts = currentUser.attempts[setId] || 0;
+  const setAttempts = getAttemptCount(currentUser.username, setId);
   if (setAttempts >= MAX_ATTEMPTS) {
     alert(`⚠️ আপনি এই সেটের সর্বোচ্চ ${MAX_ATTEMPTS} বার Test দিয়েছেন।`);
     return;
   }
   
-  currentUser.attempts[setId] = (currentUser.attempts[setId] || 0) + 1;
+  incrementAttempt(currentUser.username, setId);
   
   cur = 0; score = 0; wrong = 0; answered = false;
   timeLeft = 10 * 60; userAnswers = [];
@@ -765,6 +819,9 @@ function startQuiz(setId) {
   document.getElementById('testSetLabel').textContent = set.name;
   document.getElementById('testSetName').textContent = 'শিক্ষাবিজ্ঞান';
   document.getElementById('testTopic').textContent = set.topic;
+  
+  // Update retry button
+  document.getElementById('retryBtn').disabled = false;
   
   clearInterval(timerInterval);
   timerInterval = setInterval(tick, 1000);
@@ -837,8 +894,11 @@ function showResult() {
   document.getElementById('rbWrong').textContent = wrong;
   document.getElementById('rbPct').textContent = pct + '%';
   
-  const remaining = MAX_ATTEMPTS - (currentUser.attempts[currentSetId] || 0);
+  const remaining = MAX_ATTEMPTS - (getAttemptCount(currentUser.username, currentSetId) || 0);
   document.getElementById('attemptInfo').innerHTML = `👤 ${currentUser.username} — ${set.name}: বাকি আছে <strong>${remaining}</strong> বার Test দেওয়ার সুযোগ (সর্বোচ্চ ${MAX_ATTEMPTS} বার)`;
+  
+  // Disable retry if no attempts left
+  document.getElementById('retryBtn').disabled = remaining <= 0;
   
   const grades = [
     [90, '🌟', 'অসাধারণ!'],
@@ -849,6 +909,17 @@ function showResult() {
   const g = grades.find(x => pct >= x[0]);
   document.getElementById('resultIcon').textContent = g[1];
   document.getElementById('resultGrade').textContent = g[2] + ' (' + set.topic + ')';
+}
+
+function retryQuiz() {
+  const setId = currentSetId;
+  const remaining = MAX_ATTEMPTS - (getAttemptCount(currentUser.username, setId) || 0);
+  if (remaining <= 0) {
+    alert(`⚠️ আপনি ${allSets[setId].name} এর সর্বোচ্চ ${MAX_ATTEMPTS} বার Test দিয়েছেন।`);
+    return;
+  }
+  document.getElementById('resultWrap').classList.remove('show');
+  startQuiz(setId);
 }
 
 function showReview() {
@@ -889,6 +960,5 @@ function loadReview() {
   document.getElementById('scoreShow').textContent = 'সবুজ = সঠিক উত্তর';
 }
 </script>
-
 </body>
 </html>
